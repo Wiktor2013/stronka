@@ -1,15 +1,24 @@
-{% extends "base.html" %}
-{% block content %}
-    <h1>Hi, {{ user.username }}!</h1>
+{% extends 'base.html' %}
+
+
+{% block title %} Home {% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <center>
+    <h1>Graciarnia</h1>
+<h3>Program do obsługi magazynu odczynników i materiałów zużywalnych.</h3>
+    <h3>BLIRT S.A./Kładki </h3>
+</center>
+
+
+</div>
+<div style="height: 500px;">&nbsp;
+
+<center>
+<a href="/login"><button class="btn btn-success navbar-btn">Zaloguj</button> </a>
+<a href="/register"><button class="btn btn-success navbar-btn">Zarejestruj</button> </a>
+</center>
+</div>
 {% endblock %}
-<!--<!doctype html>-->
-<!--<html>-->
-<!--    <head>-->
-<!--        <title>{{ title }} - Strona główna</title>-->
-<!--    </head>-->
-<!--    <body>-->
-<!--        <center>-->
-<!--        <h1>Hello, {{ user.username }}!</h1>-->
-<!--        </center>-->
-<!--    </body>-->
-<!--</html>-->
