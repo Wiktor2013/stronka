@@ -2,10 +2,11 @@
 {% block title %} Zaloguj się {% endblock %}
 {% block body %}
 
-<div class="form-group">
+<form method="POST">
+    <div class="form-group">
     <label for="name">Użytkownik</label>
     <input type="name" class="form-control" id="name" name="name" value="{{name}}" aria-describedby="emailHelp" placeholder="Użytkownik">
-    <small id="name" class="form-text text-muted">Taki sam jakim logujesz się do komputera</small>
+    <small class="form-text text-muted">Taki sam jakim logujesz się do komputera</small>
   </div>
 <div class="form-group">
     <label for="exampleInputEmail1">Adres email</label>
@@ -20,15 +21,6 @@
     <label class="form-check-label" for="exampleCheck1">Wyloguj automatycznie</label>
   </div>
   <button type="submit" class="btn btn-primary">Zaloguj</button>
-
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class=flashes>
-    {% for message in messages %}
-      <li>{{ message }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
+</form>
 
 {% endblock %}
