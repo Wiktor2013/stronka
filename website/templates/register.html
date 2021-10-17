@@ -3,24 +3,22 @@
 {% block title %}Rejestracja{% endblock %}
 {% block body %}
 
-
-
 <form method="POST">
   <div class="mb-3">
+    <label for="name" class="form-label">Użytkownik</label><br>
+    <input type="text" id="name" name="name" value="{{name}}" class="form-control" placeholder="Stwórz nazwę użytkownika" >
+  </div>
+  <div class="mb-3">
     <label for="email" class="form-label">Email</label><br>
-    <input type="email" id="email" name="email" value="{{email}}" class="form-control" >
+    <input type="email" id="email" name="email" value="{{email}}" class="form-control" placeholder="Podaj firmowy adres email" >
   </div>
   <div class="mb-3">
-    <label for="name" class="form-label">Name</label><br>
-    <input type="text" id="name" name="name" value="{{name}}" class="form-control" >
+    <label for="password1" class="form-label">Hasło</label><br>
+    <input type="password" id="password1" name="password1" value="{{password1}}" class="form-control" placeholder="Hasło musi mieć długość 6-12 znaków, zawierać co najmniej: 1 Wielką literę, 1 małą literę, jedną cyfrę i znak specjalny "$@#"" >
   </div>
   <div class="mb-3">
-    <label for="password1" class="form-label">Password</label><br>
-    <input type="password" id="password1" name="password1" value="{{password1}}" class="form-control" >
-  </div>
-  <div class="mb-3">
-    <label for="password1" class="form-label">Password confirm</label><br>
-    <input type="password" id="password2" name="password2" value="{{password2}}" class="form-control" >
+    <label for="password1" class="form-label">Potwierdź hasło</label><br>
+    <input type="password" id="password2" name="password2" value="{{password2}}" class="form-control" placeholder="Hasło w tym polu musi być takie same jak w polu powyżej">
   </div>
   <button type="submit" class="btn btn-success">Zarejestruj sie</button>
   <button type="reset" class="btn btn-info">Wyczyść</button>

@@ -3,24 +3,24 @@
 {% block body %}
 
 <form method="POST">
-    <div class="form-group">
-    <label for="name">Użytkownik</label>
-    <input type="name" class="form-control" id="name" name="name" value="{{name}}" aria-describedby="emailHelp" placeholder="Użytkownik">
-    <small class="form-text text-muted">Taki sam jakim logujesz się do komputera</small>
-  </div>
-<div class="form-group">
-    <label for="exampleInputEmail1">Adres email</label>
-    <input type="email" class="form-control" id="exampleInputEmail1" name="email" value="{{email}}" aria-describedby="emailHelp" placeholder="Enter email">
-  </div>
-  <div class="form-group">
-    <label for="exampleInputPassword1">Hasło</label>
-    <input type="password" class="form-control" id="exampleInputPassword1" value="{{passwd}}" name="passwd" placeholder="Hasło">
-  </div>
+    <div class="mb-3">
+    <label for="name" class="form-label">Użytkownik</label><br>
+    <input type="text" id="name" name="name" value="{{name}}" class="form-control" placeholder="Podaj nazwę użytkownika jak przy rejestracji">
+    </div>
+    <div class="mb-3">
+    <label for="email" class="form-label">Email</label><br>
+    <input type="email" id="email" name="email" value="{{email}}" class="form-control" placeholder="Podaj firmowy adres email" >
+    </div>
+    <div class="mb-3">
+    <label for="password1" class="form-label">Hasło</label><br>
+    <input type="password" id="password1" name="password1" value="{{password1}}" class="form-control" placeholder="Hasło musi mieć długość 6-12 znaków, zawierać co najmniej: 1 Wielką literę, 1 małą literę, jedną cyfrę i znak specjalny "$@#"" >
+    </div>
   <div class="form-check">
     <input type="checkbox" class="form-check-input" id="exampleCheck1">
     <label class="form-check-label" for="exampleCheck1">Wyloguj automatycznie</label>
   </div>
-  <button type="submit" class="btn btn-primary">Zaloguj</button>
+  <button type="submit" class="btn btn-success">Zaloguj</button>
+  <button type="reset" class="btn btn-info">Wyczyść</button>
 </form>
 
 {% endblock %}

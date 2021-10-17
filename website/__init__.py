@@ -1,4 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
+from flask_wtf import FlaskForm
+from wtforms import TextField, BooleanField, TextAreaField, SubmitField
 from datetime import datetime
 from string import punctuation
 from flask_sqlalchemy import SQLAlchemy #0. Instalacja i import SQLAlchemy (requirements.txt)
@@ -6,7 +8,6 @@ import re
 from flask_migrate import Migrate
 
 now = datetime.now()
-
 current_time = now.strftime("%H:%M:%S")
 
 app = Flask(__name__)
@@ -31,6 +32,12 @@ migrate = Migrate(app=app, db=db)
 #te komendy ponizej wykonaj za kazdym razem jak zmieni sie struktuta bazy (oraz podczas pierwszego tworzenia)
 #flask db migrate
 #flask db upgrade
+class ContactForm(FlaskForm):
+    name = TextField("Użytkownik")
+    email = TextField("Adres email")
+    subject = TextField("Temat wiadomości")
+    message = TextAreaField("Wiadomość")
+    submit = SubmitField("Wyślij")
 
 @app.route("/")
 def home():
@@ -151,6 +158,14 @@ def register():
             flash('length should be not be greater than 12', category='danger')
             success = False
 
+        if password2 == None:
+            flash('confirm your password', category='danger')
+            success = False
+
+        if password1 != password2:
+            flash('passwords must match', category='danger')
+            success = False
+
         if not any(char.isdigit() for char in password1):
             flash('Password should have at least one numeral', category='danger')
             success = False
@@ -173,7 +188,20 @@ def register():
         #return redirect(url_for('home'))
     return render_template("register.html", email=email, password1=password1, password2=password2, name=name)
 
-
+@app.route('/contactus', methods=["GET", "POST"])
+def contact():
+    form = ContactForm()
+    if request.method == "POST":
+        name = request.form.get("name")
+        email = request.form.get("email")
+        subject = request.form.get("subject")
+        message = request.form.get("message")
+        wiadomosci = dict(request.form)
+        with open("wiadomosci.txt", "a") as f:
+            f.write(wiadomosci["name"] + ";" + wiadomosci["email"] + ";" + wiadomosci["email"] + current_time + "\n")
+        flash("Dane zapisane", category="success")
+    else:
+        return render_template('contact_form.html', form=form)
 
 
 
