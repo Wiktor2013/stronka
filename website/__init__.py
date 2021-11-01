@@ -1,13 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
-from flask_wtf import FlaskForm
-from wtforms import TextField, BooleanField, TextAreaField, SubmitField
-from datetime import datetime
+from datetime import datetime, date
 from string import punctuation
 from flask_sqlalchemy import SQLAlchemy #0. Instalacja i import SQLAlchemy (requirements.txt)
-import re
+import pandas as pd
 from flask_migrate import Migrate
+from flask_wtf import FlaskForm
+from wtforms import TextField, BooleanField, TextAreaField, SubmitField
 
 now = datetime.now()
+dzisiaj = date.today()
 current_time = now.strftime("%H:%M:%S")
 
 app = Flask(__name__)
@@ -21,6 +22,7 @@ class User(db.Model):
     name = db.Column(db.String(25))
     email = db.Column(db.String(25), unique=True)
     password = db.Column(db.String(25))
+    obieg = db.Column(db.String(100))
 
 #4. stworzenie obiektu migracji
 migrate = Migrate(app=app, db=db)
@@ -29,15 +31,17 @@ migrate = Migrate(app=app, db=db)
 #Migracja - to skrypt ktory tworzy/modyfikuje strukture bazy danych
 #otworz terminal i jednorazowo przy projekcie wpisz
 #flask db init
-#te komendy ponizej wykonaj za kazdym razem jak zmieni sie struktuta bazy (oraz podczas pierwszego tworzenia)
+#te komendy ponizej wykonaj za kazdym razem jak zmieni sie struktura bazy (oraz podczas pierwszego tworzenia)
 #flask db migrate
 #flask db upgrade
+
 class ContactForm(FlaskForm):
     name = TextField("Użytkownik")
     email = TextField("Adres email")
     subject = TextField("Temat wiadomości")
     message = TextAreaField("Wiadomość")
     submit = SubmitField("Wyślij")
+
 
 @app.route("/")
 def home():
@@ -54,7 +58,7 @@ def login():
         passwd = request.form.get("passwd")
         dane = dict(request.form)
         with open("login_log.txt", "a") as f:
-            f.write(dane["name"] + ";" + dane["email"] + ";" + current_time + "\n")
+            f.write(dane["name"] + " ; " + dane["email"] + " ; " + str(dzisiaj) + " ; " + current_time + "\n")
         #print(dane)
         # return f"Thanks, {request.form.get('name')}"
         #return render_template("login.html", message=f"Thanks, {dane['name']}")
@@ -192,15 +196,17 @@ def register():
 def contact():
     form = ContactForm()
     if request.method == "POST":
-        name = request.form.get("name")
-        email = request.form.get("email")
-        subject = request.form.get("subject")
-        message = request.form.get("message")
-        wiadomosci = dict(request.form)
-        with open("wiadomosci.txt", "a") as f:
-            f.write(wiadomosci["name"] + ";" + wiadomosci["email"] + ";" + wiadomosci["email"] + current_time + "\n")
+        name = request.form["name"]
+        email = request.form["email"]
+        subject = request.form["subject"]
+        message = request.form["message"]
+        wiadomosci = pd.DataFrame({'name': name, 'email':email, 'subject': subject, 'message': message}, index = [0])
+        wiadomosci.to_csv('/home/sanczo/PycharmProjects/stronka/contactusMessage.csv')
+        # with open("wiadomosci.txt", "a") as f:
+            # f.write(wiadomosci["name"] + " ; " + wiadomosci["email"] + " ; " + str(dzisiaj) + " ; " + current_time + "\n")
         flash("Dane zapisane", category="success")
     else:
+
         return render_template('contact_form.html', form=form)
 
 
