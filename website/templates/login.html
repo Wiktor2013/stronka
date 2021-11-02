@@ -2,11 +2,7 @@
 {% block title %} Zaloguj się {% endblock %}
 {% block body %}
 
-<form method="POST">
-    <div class="mb-3">
-    <label for="name" class="form-label">Użytkownik</label><br>
-    <input type="text" id="name" name="name" value="{{name}}" class="form-control" placeholder="Podaj nazwę użytkownika jak przy rejestracji">
-    </div>
+<form method="POST" class="text-center card-body p-5 container">
     <div class="mb-3">
     <label for="email" class="form-label">Email</label><br>
     <input type="email" id="email" name="email" value="{{email}}" class="form-control" placeholder="Podaj firmowy adres email" >
