@@ -8,31 +8,39 @@ class LettersRequired(object):
         for literka in field.data:
             if literka.isalpha():
                 return
-        raise ValidationError("Text should have letters!")
+        raise ValidationError("Tekst powinien zawierać litery!")
 
 class IsupperRequired(object):
     def __call__(self, form, field):
         for literka in field.data:
             if literka.isupper():
                 return
-        raise ValidationError("Text should have letters!")
+        raise ValidationError("Hasło powinno zawierać wielkie litery!")
 
+class localEmail(object):
+    def __call__(self, form, field):
+        if "@blirt.eu" in field.data:
+                return
+        raise ValidationError("Podaj firmowy email")
 
 class ComplainForm(FlaskForm):
-    email = StringField("Email", [Email(), DataRequired()])
-    complain = TextAreaField("Complain", [Length(min=10), DataRequired(), LettersRequired()])
+    email = StringField("Adres email", [Email(check_deliverability=True), DataRequired(), localEmail()])
+    complain = TextAreaField("Skarga", [Length(min=10), DataRequired(), LettersRequired()])
 
+class LoginForm(FlaskForm):
+    name = TextField("Użytkownik", [validators.DataRequired(), validators.Length(min=3, max=50)])
+    email = TextField("Adres email", [Email(check_deliverability=True), DataRequired(), localEmail()])
 
 class ContactForm(FlaskForm):
-    name = TextField("Użytkownik")
-    email = TextField("Adres email")
-    subject = TextField("Temat wiadomości")
-    message = TextAreaField("Wiadomość")
+    name = TextField("Użytkownik", [validators.DataRequired(), validators.Length(min=3, max=50)])
+    email = TextField("Adres email", [Email(check_deliverability=True), DataRequired(), localEmail()])
+    subject = TextField("Temat wiadomości", [validators.Length(min=3, max=50)])
+    message = TextAreaField("Wiadomość", [validators.Length(min=3, max=250)])
     submit = SubmitField("Wyślij")
 
 
 class RegisterForm(FlaskForm):
     login = StringField('Login', [validators.DataRequired(), validators.Length(min=3, max=50)])
-    email = StringField("Email", [Email(), DataRequired()])
+    email = StringField("Email", [Email(check_deliverability=True), DataRequired(), localEmail()])
     password1 = PasswordField('Password', [validators.DataRequired(), validators.Length(min=7, max=50), validators.EqualTo('password2',message='Passwords must match')])
     password2 = PasswordField('Password confirm', [validators.DataRequired(), validators.Length(min=7, max=50)])

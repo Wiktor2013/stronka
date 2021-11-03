@@ -1,0 +1,79 @@
+# return render_template("register.html", form=form)
+    # email = ""
+    # name = ""
+    # password1 = ""
+    # password2 = ""
+    # if request.method == "POST":
+    #     email = request.form.get("email")
+    #     name = request.form.get("name")
+    #     password1 = request.form.get("password1")
+    #     password2 = request.form.get("password2")
+    #
+    #     success = True
+    #     if len(password1) < 6:
+    #         flash('length should be at least 6', category='danger')
+    #         success = False
+    #
+    #     if len(password1) > 12:
+    #         flash('length should be not be greater than 12', category='danger')
+    #         success = False
+    #
+    #     if password2 == None:
+    #         flash('confirm your password', category='danger')
+    #         success = False
+    #
+    #     if password1 != password2:
+    #         flash('passwords must match', category='danger')
+    #         success = False
+    #
+    #     if not any(char.isdigit() for char in password1):
+    #         flash('Password should have at least one numeral', category='danger')
+    #         success = False
+    #
+    #     if not any(char.isupper() for char in password1):
+    #         flash('Password should have at least one uppercase letter', category='danger')
+    #         success = False
+    #
+    #     if not any(char.islower() for char in password1):
+    #         flash('Password should have at least one lowercase letter', category='danger')
+    #         success = False
+    #
+    #     if not any(True for char in password1 if char in punctuation):
+    #         flash('Password should have at least one of the symbols $@#', category='danger')
+    #         success = False
+    #
+    #     if success:
+
+    # reg = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$"
+#
+#         # compiling regex
+#         pat = re.compile(reg)
+#
+#         # searching regex
+#         mat = re.search(pat, password1)
+#
+#         # validating conditions
+#         if mat:
+#             flash("Password is valid.", category="success")
+#         else:
+#             flash("Password invalid !!", category="danger")
+
+
+# def register():
+#     def main():
+#         passwd = 'Geek12@'
+#         reg = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$"
+#
+#         # compiling regex
+#         pat = re.compile(reg)
+#
+#         # searching regex
+#         mat = re.search(pat, passwd)
+#
+#         # validating conditions
+#         if mat:
+#             print("Password is valid.")
+#         else:
+#             print("Password invalid !!")
+
+# return render_template("login.html")
