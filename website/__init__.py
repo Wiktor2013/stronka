@@ -6,13 +6,12 @@ import pandas as pd
 from flask_migrate import Migrate
 from sqlalchemy import ForeignKey
 from .forms import ComplainForm, ContactForm, RegisterForm, LoginForm
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin, LoginManager, login_user, logout_user, current_user, login_required #L1. importy
 
 now = datetime.now()
 current_time = now.strftime("%H:%M:%S")
 print(current_time)
-dzisiaj = date.today()
-print(dzisiaj)
 
 
 app = Flask(__name__)
@@ -21,11 +20,13 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db" #1 Dodanie info 
 db = SQLAlchemy(app=app) #2. Dodanie obiektu
 
 #3. stworzenie modelu/tabeli
-class User(db.Model):
-    user_id = db.Column(db.Integer, primary_key=True)
-    user_name = db.Column(db.String(25))
-    user_email = db.Column(db.String(35), unique=True)
+class User(db.Model, UserMixin): #L2. UserMixin - dodajac go do tabeli mowimy ze ta tabela bedzie mogla byc odczytywana przez LoginManagera
+    id = db.Column(db.Integer, primary_key=True)
+    user_first_name = db.Column(db.String(25))
+    user_second_name = db.Column(db.String(35), unique=True)
+    user_company_initials = db.Column(db.String(4))
     user_password = db.Column(db.String(25))
+    user_email = db.Column(db.String(25))
     user_project = db.Column(db.String(50))
     user_login_log = db.Column(db.String(50))
     user_complain = db.Column(db.String(250))
@@ -70,9 +71,9 @@ class Messages(db.Model):
 
 class Login_log(db.Model):
     login_log_id = db.Column(db.Integer, primary_key=True)
-    login_user = db.Column(db.String(35))
-    login_date = db.Column(db.String(12))
-    login_time = db.Column(db.String(12))
+    login_user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    login_date = db.Column(db.DateTime(timezone=True))
+
 
 
 
@@ -87,48 +88,61 @@ migrate = Migrate(app=app, db=db)
 #flask db migrate
 #flask db upgrade
 
+#L3. Utworz login managera
+login_manager = LoginManager(app=app)
+login_manager.login_view = "login" #L4. wpisujemy nazwe funkcji do ktorej ma nas przekierowac jesli uzytkownik probuje wejsc w miejsce nie dla niego ;)
+#L5, Musimy podac w jaki posob LoginManager ma pobierac uzytkownika z bazy
+@login_manager.user_loader
+def load_user(id):
+    return User.query.get(int(id))
+
 @app.route("/")
+@login_required
 def home():
     return render_template('home.html')
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    form = LoginForm()
-    email = ""
-    name = ""
-    passwd = ""
-    if request.method == "POST":
-        email = request.form.get("email")
-        passwd = request.form.get("password1")
-        dane = dict(request.form)
-        with open("login_log.txt", "a") as f:
-            f.write(dane["email"] + " ; " + str(dzisiaj) + " ; " + current_time + "\n")
-        login_log = Login_log(login_user=email, login_date=dzisiaj, login_time=current_time)
-        db.session.add(login_log)
-        db.session.commit()
-        flash("Zalogowano!", category="success")
-
-    return render_template('login.html', title='Login')
 
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        print(f"{form.name.data} {form.email.data}")
-        flash("Rejestracja poprawna", category="success")
+        # utworz obiekt klasy-tabeli
+        user = User(user_first_name=form.login.data, user_email=form.email.data,
+                    user_password=generate_password_hash(form.password1.data, method="sha256"))
+        db.session.add(user)
+        db.session.commit()
+        flash("Zarejestrowano nowego użytkownika!", category="success")
+        return redirect(url_for("login"))
     else:
         for error in list(form.email.errors) + list(form.password1.errors):
             flash(error, category="danger")
 
-            # utworz obiekt klasy-tabeli
-            user = User(name=name, email=email, password=generate_password_hash(password1, method="sha256"))
-            db.session.add(user)
-            db.session.commit()
-            flash("Zarejestrowano nowego użytkownika!", category="success")
+    return render_template("register.html", form=form)
 
-        #return redirect(url_for('home'))
-    return render_template("register.html")
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        email = form.email.data
+        password = form.password.data
+        user = User.query.filter_by(user_email=email).first()
+        if user:
+            if check_password_hash(user.user_password, password):
+                login_log = Login_log(login_user_id=user.id, login_date=datetime.now())
+                db.session.add(login_log)
+                db.session.commit()
+                login_user(user) #dodaj to zeby sie user zalogowal
+                flash("Zalogowano!", category="success")
+                return redirect(url_for("home"))
+            else:
+                flash("Niepoprawne haslo!", category="danger")
+        else:
+            flash("NIe ma takiego uzytkownika!", category="danger")
+
+    return render_template('login.html', title='Login', form=form)
+
 
 @app.route('/contactus', methods=["GET", "POST"])
 def contact():
@@ -150,27 +164,24 @@ def contact():
 
 
 @app.route("/complain", methods=["GET", "POST"])
+@login_required #dodaj to do kazdej strony ktora ma byc dostepna tylko po zalogowaniu
 def complain():
     form = ComplainForm()
-    if request.method == "POST":
-        email = request.form["email"]
-        complain = request.form["complain"]
 
     if form.validate_on_submit():
-        #print(f"{form.email.data} {form.complain.data}")
+        skarga = Complains(complain_author=form.email.data, complain_body=form.complain.data)
+        db.session.add(skarga)
+        db.session.commit()
         flash("Dodano Twoją skargę", category="success")
     else:
         for error in list(form.email.errors) + list(form.complain.errors):
             flash(error, category="danger")
 
-        skarga = Complains(complain_author=email, complain_body=complain)
-        db.session.add(skarga)
-        db.session.commit()
-        flash("Dodano Twoją skargę", category="success")
     return render_template("complain.html", form=form)
 
 
-
-
-
-
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for("login"))

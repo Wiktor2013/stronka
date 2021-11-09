@@ -10,6 +10,7 @@ class LettersRequired(object):
                 return
         raise ValidationError("Tekst powinien zawierać litery!")
 
+
 class IsupperRequired(object):
     def __call__(self, form, field):
         for literka in field.data:
@@ -17,30 +18,40 @@ class IsupperRequired(object):
                 return
         raise ValidationError("Hasło powinno zawierać wielkie litery!")
 
-class localEmail(object):
+
+class LocalEmail(object):
     def __call__(self, form, field):
         if "@blirt.eu" in field.data:
-                return
+            return
         raise ValidationError("Podaj firmowy email")
 
-class ComplainForm(FlaskForm):
-    email = StringField("Adres email", [Email(check_deliverability=True), DataRequired(), localEmail()])
-    complain = TextAreaField("Skarga", [Length(min=10), DataRequired(), LettersRequired()])
+
+class RegisterForm(FlaskForm):
+    login = StringField('Login', [validators.DataRequired(), validators.Length(min=3, max=50)])
+    email = StringField("Email", [Email(check_deliverability=True), DataRequired(), LocalEmail()])
+    password1 = PasswordField('Password', [validators.DataRequired(), validators.Length(min=7, max=50), validators.EqualTo('password2',message='Passwords must match')])
+    password2 = PasswordField('Password confirm', [validators.DataRequired(), validators.Length(min=7, max=50)])
+
 
 class LoginForm(FlaskForm):
-    name = TextField("Użytkownik", [validators.DataRequired(), validators.Length(min=3, max=50)])
-    email = TextField("Adres email", [Email(check_deliverability=True), DataRequired(), localEmail()])
+    email = TextField("Adres email", [Email(check_deliverability=True), DataRequired(), LocalEmail()])
+    password = TextField("Hasło", [DataRequired()])
+
 
 class ContactForm(FlaskForm):
     name = TextField("Użytkownik", [validators.DataRequired(), validators.Length(min=3, max=50)])
-    email = TextField("Adres email", [Email(check_deliverability=True), DataRequired(), localEmail()])
+    email = TextField("Adres email", [Email(check_deliverability=True), DataRequired(), LocalEmail()])
     subject = TextField("Temat wiadomości", [validators.Length(min=3, max=50)])
     message = TextAreaField("Wiadomość", [validators.Length(min=3, max=250)])
     submit = SubmitField("Wyślij")
 
 
-class RegisterForm(FlaskForm):
-    login = StringField('Login', [validators.DataRequired(), validators.Length(min=3, max=50)])
-    email = StringField("Email", [Email(check_deliverability=True), DataRequired(), localEmail()])
-    password1 = PasswordField('Password', [validators.DataRequired(), validators.Length(min=7, max=50), validators.EqualTo('password2',message='Passwords must match')])
-    password2 = PasswordField('Password confirm', [validators.DataRequired(), validators.Length(min=7, max=50)])
+class ComplainForm(FlaskForm):
+    email = StringField("Adres email", [Email(check_deliverability=True), DataRequired(), LocalEmail()])
+    complain = TextAreaField("Skarga", [Length(min=10), DataRequired(), LettersRequired()])
+
+
+
+
+
+
