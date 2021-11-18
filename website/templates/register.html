@@ -5,20 +5,25 @@
 
 <form method="POST" class="text-center card-body p-5 container">
   {{ form.csrf_token }}
-  <div class="mb-3">
+    <div class="input-group">
+  <span class="input-group-text">Imię i nazwisko</span>
+  <input type="text" aria-label="First name" class="form-control">
+  <input type="text" aria-label="Last name" class="form-control">
+    </div>
+  <div class="mb-5">
     <label for="login" class="form-label">Użytkownik</label><br>
-     {{ form.login(class="form-control form-control-lg", placeholder="Podaj nazwe") }}
+     {{ form.login(class="form-control", placeholder="Stwórz nazwę użytkownika") }}
   </div>
-  <div class="mb-3">
+  <div class="mb-5">
     <label for="email" class="form-label">Email</label><br>
-    {{ form.email(class="form-control form-control-lg", placeholder="Podaj firmowy adres email") }}
+    {{ form.email(class="form-control", placeholder="Podaj firmowy adres email") }}
   </div>
-  <div class="mb-3">
+  <div class="mb-5">
     <label for="password1" class="form-label">Hasło</label><br>
- {{ form.password1(class="form-control form-control-lg", placeholder="Podaj firmowy adres email") }}  </div>
-  <div class="mb-3">
+ {{ form.password1(class="form-control", placeholder="Podaj hasło") }}  </div>
+  <div class="mb-5">
     <label for="password1" class="form-label">Potwierdź hasło</label><br>
- {{ form.password2(class="form-control form-control-lg", placeholder="Podaj firmowy adres email") }}  </div>
+ {{ form.password2(class="form-control", placeholder="Powtórz wybrane hasło") }}  </div>
   <button type="submit" class="btn btn-success">Zarejestruj sie</button>
   <button type="reset" class="btn btn-info">Wyczyść</button>
 </form>
