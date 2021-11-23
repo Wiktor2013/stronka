@@ -5,32 +5,47 @@ from flask_sqlalchemy import SQLAlchemy #0. Instalacja i import SQLAlchemy (requ
 import pandas as pd
 from flask_migrate import Migrate
 from sqlalchemy import ForeignKey
-from .forms import ComplainForm, ContactForm, RegisterForm, LoginForm
+from .forms import ComplainForm, ContactForm, RegisterForm, LoginForm, ForgotForm, ResetForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, LoginManager, login_user, logout_user, current_user, login_required #L1. importy
+from flask_mail import Message, Mail
+from random import choice
+from string import ascii_letters
 
 now = datetime.now()
 current_time = now.strftime("%H:%M:%S")
 print(current_time)
 
+def create_code(size):
+    return "".join([choice(ascii_letters) for i in range(size)])
 
 app = Flask(__name__)
 app.secret_key = 'dupa'
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db" #1 Dodanie info o rodzaju bazy i gdzie jest
+app.config["MAIL_SERVER"] = "smtp.gmail.com"
+app.config["MAIL_PORT"] = 465
+app.config["MAIL_USERNAME"] = "sanczo.panczo77@gmail.com"
+app.config["MAIL_PASSWORD"] = "lbbadatqttyykesf"
+app.config["MAIL_USE_TLS"] = False
+app.config["MAIL_USE_SSL"] = True
+
+mail = Mail(app=app)
 db = SQLAlchemy(app=app) #2. Dodanie obiektu
 
 #3. stworzenie modelu/tabeli
 class User(db.Model, UserMixin): #L2. UserMixin - dodajac go do tabeli mowimy ze ta tabela bedzie mogla byc odczytywana przez LoginManagera
     id = db.Column(db.Integer, primary_key=True)
     user_first_name = db.Column(db.String(25))
-    user_second_name = db.Column(db.String(35), unique=True)
+    user_second_name = db.Column(db.String(35))
     user_company_initials = db.Column(db.String(4))
     user_password = db.Column(db.String(25))
-    user_email = db.Column(db.String(25))
+    user_email = db.Column(db.String(25), unique=True)
     user_project = db.Column(db.String(50))
     user_login_log = db.Column(db.String(50))
     user_complain = db.Column(db.String(250))
     user_message = db.column(db.String(250))
+    is_confirmed = db.Column(db.Boolean, default=False)
+    confirmation_code = db.Column(db.String(65))
 
 class Complains(db.Model):
     complain_id = db.Column(db.Integer, primary_key=True)
@@ -99,6 +114,9 @@ def load_user(id):
 @app.route("/")
 @login_required
 def home():
+    # msg = Message("Testowy temat", sender="Sanczo panczo", recipients=["weresa@gmail.com", "rork3@wp.pl"])
+    # msg.html = "<h1>Witaj</h1>"
+    # mail.send(msg)
     return render_template('home.html')
 
 
@@ -107,10 +125,14 @@ def register():
     form = RegisterForm()
     if form.validate_on_submit():
         # utworz obiekt klasy-tabeli
-        user = User(user_first_name=form.login.data, user_email=form.email.data,
-                    user_password=generate_password_hash(form.password1.data, method="sha256"))
+        user = User(user_first_name=form.first_name.data, user_second_name=form.second_name.data, user_email=form.email.data,
+                    user_password=generate_password_hash(form.password1.data, method="sha256"),
+                    confirmation_code=create_code(64))
         db.session.add(user)
         db.session.commit()
+        msg = Message("Potwierdzenie stworzenia konta", sender="Sanczo panczo", recipients=["rork3@wp.pl", user.user_email])
+        msg.html = f"<h1>Witaj</h1> Twój link aktywacyjny: <a href='http://127.0.0.1:5000/confirm/{user.confirmation_code}'>CLICK</a>"
+        mail.send(msg)
         flash("Zarejestrowano nowego użytkownika!", category="success")
         return redirect(url_for("login"))
     else:
@@ -119,6 +141,16 @@ def register():
 
     return render_template("register.html", form=form)
 
+
+@app.route("/confirm/<code>")
+def confirm(code):
+    user = User.query.filter_by(confirmation_code=code).first()
+    if not user:
+        return "<h1>Bad Request</h1>", 400
+    user.confirmation_code = ""
+    user.is_confirmed = True
+    db.session.commit()
+    return redirect(url_for("login"))
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -130,18 +162,22 @@ def login():
         user = User.query.filter_by(user_email=email).first()
         if user:
             if check_password_hash(user.user_password, password):
-                login_log = Login_log(login_user_id=user.id, login_date=datetime.now())
-                db.session.add(login_log)
-                db.session.commit()
-                login_user(user) #dodaj to zeby sie user zalogowal
-                flash("Zalogowano!", category="success")
-                return redirect(url_for("home"))
+                if user.is_confirmed:
+                    login_log = Login_log(login_user_id=user.id, login_date=datetime.now())
+                    db.session.add(login_log)
+                    db.session.commit()
+                    login_user(user) #dodaj to zeby sie user zalogowal
+                    flash("Zalogowano!", category="success")
+                    return redirect(url_for("home"))
+                else:
+                    flash("Email nie został potwierdzony", category="danger")
             else:
                 flash("Niepoprawne haslo!", category="danger")
         else:
-            flash("NIe ma takiego uzytkownika!", category="danger")
+            flash("Nie ma takiego uzytkownika!", category="danger")
 
     return render_template('login.html', title='Login', form=form)
+
 
 
 @app.route('/contactus', methods=["GET", "POST"])
@@ -185,3 +221,20 @@ def complain():
 def logout():
     logout_user()
     return redirect(url_for("login"))
+
+@app.route('/forgot', methods=["GET", "POST"])
+def forgot():
+    form = ForgotForm()
+    return render_template('forgot.html')
+
+
+@app.route('/reset', methods=["GET", "POST"])
+def reset():
+    form = ResetForm()
+    # if form.validate_on_submit():
+    #     if form.validate_on_submit():
+    #         email = form.email.data
+    #         password = form.password.data
+    #     db.session.add(skarga)
+    #     db.session.commit()
+    return render_template('reset.html')

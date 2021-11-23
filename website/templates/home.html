@@ -11,10 +11,12 @@
 <div class="container">
     <center>
     <h3>Graciarnia</h3>
-<h3>Program do obsługi magazynu odczynników i materiałów zużywalnych.</h3>
-    <h3>BLIRT S.A./Kładki </h3>
-</center>
-Witaj {{ current_user.user_login }}
+<h5>Program do obsługi magazynu odczynników i materiałów zużywalnych.</h5>
+    <h5>BLIRT S.A./Kładki </h5>
+
+    Witaj {{ current_user.user_email }}
+    </center>
+
 
 </div>
 <div>&nbsp;</div>
@@ -24,10 +26,14 @@ Witaj {{ current_user.user_login }}
 <div>&nbsp;</div>
 <div>&nbsp;</div>
 <div>&nbsp;</div>
+
 <div>&nbsp;
 <center>
+    {% if not current_user.is_authenticated %}
 <a href="/login"><button class="btn btn-success navbar-btn">Zaloguj</button> </a>
 <a href="/register"><button class="btn btn-success navbar-btn">Zarejestruj</button> </a>
+    {% endif %}
 </center>
 </div>
+
 {% endblock %}

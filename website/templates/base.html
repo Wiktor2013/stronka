@@ -12,9 +12,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container">
-
-      <a class="navbar-brand" href="https://blirt.eu/"><img src="static/css/blirt-logo-top.png" alt="" width="287" height="45" class="d-inline-block align-text-top">
-          BLIRT S.A.</a>
+      <a class="navbar-brand" href="https://blirt.eu/"><img src="static/css/blirt-logo-top.png" alt="" width="287" height="45" class="d-inline-block align-text-top"></a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -28,10 +26,11 @@
         <a class="nav-link" href="/contactus">Kontakt</a>
       </li>
 
-
+        {% if current_user.is_authenticated %}
          <li class="nav-item">
-        <a class="nav-link" href="#">Wyloguj</a>
+        <a class="nav-link" href="/logout">Wyloguj</a>
       </li>
+        {% endif %}
 
 
     </ul>
@@ -42,9 +41,10 @@
   </div>
 
   </div>
-
+    {% if not current_user.is_authenticated %}
     <a href="/login"><button class="btn btn-success navbar-btn">Zaloguj</button> </a>
      <a href="/register"><button class="btn btn-success navbar-btn">Zarejestruj</button> </a>
+     {% endif %}
 </nav>
 
 

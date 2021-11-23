@@ -3,3 +3,4 @@ flask-login
 flask-SQLAlchemy
 flask-Migrate
 email_validator
+flask-mail

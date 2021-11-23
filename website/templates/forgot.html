@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %} Odzyskiwanie hasła {% endblock %}
+
+{% block body %}
+
+
+<section class="h-100">
+		<div class="container h-100">
+			<div class="row justify-content-sm-center h-100">
+				<div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
+					<div class="text-center my-5">
+<!--						<img src="https://getbootstrap.com/docs/5.0/assets/brand/bootstrap-logo.svg" alt="logo" width="100">-->
+					</div>
+					<div class="card shadow-lg">
+						<div class="card-body p-5">
+							<h1 class="fs-4 card-title fw-bold mb-4">Zapomniałeś(aś) hasło?</h1>
+							<form method="POST" class="needs-validation" novalidate="" autocomplete="off">
+<!--                                {{ form.csrf_token }}-->
+								<div class="mb-3">
+									<label class="mb-2 text-muted" for="email">{{ form.email.label }}</label>
+<!--									<input id="email" type="email" class="form-control" name="email" value="" required autofocus>-->
+                                    {{ form.email(class="form-control") }}
+									<div class="invalid-feedback">
+										Podałeś nieprawidłowy adres email
+									</div>
+								</div>
+
+								<div class="d-flex align-items-center">
+									<button type="submit" class="btn btn-primary ms-auto">
+										Wyślij link
+									</button>
+								</div>
+							</form>
+						</div>
+						<div class="card-footer py-3 border-0">
+							<div class="text-center">
+								Pamiętasz hasło? <a href="login" class="text-dark">Login</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<script src="js/login.js"></script>
+
+{% endblock %}

@@ -3,29 +3,106 @@
 {% block title %}Rejestracja{% endblock %}
 {% block body %}
 
-<form method="POST" class="text-center card-body p-5 container">
-  {{ form.csrf_token }}
-    <div class="input-group">
-  <span class="input-group-text">Imię i nazwisko</span>
-  <input type="text" aria-label="First name" class="form-control">
-  <input type="text" aria-label="Last name" class="form-control">
-    </div>
-  <div class="mb-5">
-    <label for="login" class="form-label">Użytkownik</label><br>
-     {{ form.login(class="form-control", placeholder="Stwórz nazwę użytkownika") }}
-  </div>
-  <div class="mb-5">
-    <label for="email" class="form-label">Email</label><br>
-    {{ form.email(class="form-control", placeholder="Podaj firmowy adres email") }}
-  </div>
-  <div class="mb-5">
-    <label for="password1" class="form-label">Hasło</label><br>
- {{ form.password1(class="form-control", placeholder="Podaj hasło") }}  </div>
-  <div class="mb-5">
-    <label for="password1" class="form-label">Potwierdź hasło</label><br>
- {{ form.password2(class="form-control", placeholder="Powtórz wybrane hasło") }}  </div>
-  <button type="submit" class="btn btn-success">Zarejestruj sie</button>
-  <button type="reset" class="btn btn-info">Wyczyść</button>
-</form>
+<section class="h-100">
+		<div class="container h-100">
+			<div class="row justify-content-sm-center h-100">
+				<div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
+					<div class="text-center my-5">
+<!--						<img src="https://getbootstrap.com/docs/5.0/assets/brand/bootstrap-logo.svg" alt="logo" width="100">-->
+					</div>
+					<div class="card shadow-lg">
+						<div class="card-body p-5">
+							<h1 class="fs-4 card-title fw-bold mb-4">Zarejestruj się</h1>
+							<form method="POST" class="needs-validation" novalidate="" autocomplete="off">
+                                {{ form.csrf_token }}
+								<div class="mb-3">
+									<label class="mb-2 text-muted" for="first_name">{{ form.first_name.label }}</label>
+                                    {{ form.first_name(class="form-control") }}
+<!--									<input id="name" type="text" class="form-control" name="name" value="{{ form.first_name.data }}" required autofocus>-->
+									<div class="invalid-feedback">
+										Imię jest wymagane
+									</div>
+								</div>
 
+                                <div class="mb-3">
+									<label class="mb-2 text-muted" for="second_name">{{ form.second_name.label }}</label>
+                                    {{ form.second_name(class="form-control") }}
+<!--									<input id="name" type="text" class="form-control" name="name" value="{{ form.second_name.data }}" required autofocus>-->
+									<div class="invalid-feedback">
+										Nazwisko jest wymagane
+									</div>
+								</div>
+
+								<div class="mb-3">
+									<label class="mb-2 text-muted" for="email">{{ form.email.label }}</label>
+<!--									<input id="email" type="email" class="form-control" name="email" value="{{ form.email.data }}" required>-->
+                                    {{ form.email(class="form-control") }}
+									<div class="invalid-feedback">
+										Niepoprawny email
+									</div>
+								</div>
+
+								<div class="mb-3">
+									<label class="mb-2 text-muted" for="password">{{ form.password1.label }}</label>
+<!--									<input id="password" type="password" class="form-control" name="password1" required>-->
+                                    {{ form.password1(class="form-control") }}
+								    <div class="invalid-feedback">
+								    	Hasło jest wymagane
+							    	</div>
+								</div>
+
+                                <div class="mb-3">
+									<label class="mb-2 text-muted" for="password">{{ form.password2.label }}</label>
+<!--									<input id="password" type="password" class="form-control" name="password2" required>-->
+                                    {{ form.password2(class="form-control") }}
+								    <div class="invalid-feedback">
+								    	Hasło jest wymagane
+							    	</div>
+								</div>
+
+								<div class="align-items-center d-flex">
+									<button type="submit" class="btn btn-primary ms-auto">
+										Zarejestruj
+									</button>
+								</div>
+							</form>
+						</div>
+						<div class="card-footer py-3 border-0">
+							<div class="text-center">
+								Masz już konto? <a href="login" class="text-dark">Zaloguj się</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<script src="js/login.js"></script>
 {% endblock %}
+
+<!--<form method="POST" class="text-center card-body p-5 container">-->
+
+<!--    <div class="input-group">-->
+<!--  <span class="input-group-text">Imię i nazwisko</span>-->
+<!--  <input type="text" aria-label="First name" class="form-control">-->
+<!--  <input type="text" aria-label="Last name" class="form-control">-->
+<!--    </div>-->
+<!--  <div class="mb-5">-->
+<!--    <label for="login" class="form-label">Użytkownik</label><br>-->
+<!--     {{ form.login(class="form-control", placeholder="Stwórz nazwę użytkownika") }}-->
+<!--  </div>-->
+<!--  <div class="mb-5">-->
+<!--    <label for="email" class="form-label">Email</label><br>-->
+<!--    {{ form.email(class="form-control", placeholder="Podaj firmowy adres email") }}-->
+<!--  </div>-->
+<!--  <div class="mb-5">-->
+<!--    <label for="password1" class="form-label">Hasło</label><br>-->
+<!-- {{ form.password1(class="form-control", placeholder="Podaj hasło") }}  </div>-->
+<!--  <div class="mb-5">-->
+<!--    <label for="password1" class="form-label">Potwierdź hasło</label><br>-->
+<!-- {{ form.password2(class="form-control", placeholder="Powtórz wybrane hasło") }}  </div>-->
+<!--  <button type="submit" class="btn btn-success">Zarejestruj sie</button>-->
+<!--  <button type="reset" class="btn btn-info">Wyczyść</button>-->
+<!--</form>-->
+

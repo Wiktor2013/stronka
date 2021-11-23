@@ -13,9 +13,11 @@
 						<div class="card-body p-5">
 							<h1 class="fs-4 card-title fw-bold mb-4">Zaloguj się</h1>
 							<form method="POST" class="needs-validation" novalidate="" autocomplete="off">
+								{{ form.csrf_token }}
 								<div class="mb-3">
 									<label class="mb-2 text-muted" for="email">{{ form.email.label }}</label>
 									<input id="email" type="email" class="form-control" name="email" value="" required autofocus>
+<!--									{{ form.email(class="form-control form-control-lg") }}-->
 									<div class="invalid-feedback">
 										Email jest nieprawidłowy
 									</div>
@@ -24,11 +26,12 @@
 								<div class="mb-3">
 									<div class="mb-2 w-100">
 										<label class="text-muted" for="password">{{ form.password.label }}</label>
-										<a href="forgot.html" class="float-end">
+										<a href="forgot" class="float-end">
 											Zapomniałeś(aś) hasła?
 										</a>
 									</div>
 									<input id="password" type="password" class="form-control" name="password" required>
+<!--									{{ form.password(class="form-control form-control-lg") }}-->
 								    <div class="invalid-feedback">
 								    	Hasło jest wymagane
 							    	</div>
