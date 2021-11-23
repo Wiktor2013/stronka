@@ -42,7 +42,7 @@ class LoginForm(FlaskForm):
 
 
 class ContactForm(FlaskForm):
-    name = TextField("Użytkownik", [validators.DataRequired(), validators.Length(min=3, max=50)])
+    first_name = TextField("Imię", [validators.DataRequired(), validators.Length(min=3, max=50)])
     email = TextField("Adres email", [Email(check_deliverability=True), DataRequired(), LocalEmail()])
     subject = TextField("Temat wiadomości", [validators.Length(min=3, max=50)])
     message = TextAreaField("Wiadomość", [validators.Length(min=3, max=250)])
@@ -50,7 +50,7 @@ class ContactForm(FlaskForm):
 
 
 class ComplainForm(FlaskForm):
-    email = StringField("Adres email", [Email(check_deliverability=True), DataRequired(), LocalEmail()])
+    email = TextField("Adres email", [Email(check_deliverability=True), DataRequired(), LocalEmail()])
     complain = TextAreaField("Skarga", [Length(min=10), DataRequired(), LettersRequired()])
 
 

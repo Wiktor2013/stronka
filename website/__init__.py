@@ -1,6 +1,5 @@
-import flask
 from flask import Flask, render_template, request, redirect, url_for, flash
-from datetime import datetime, date
+from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy #0. Instalacja i import SQLAlchemy (requirements.txt)
 import pandas as pd
 from flask_migrate import Migrate

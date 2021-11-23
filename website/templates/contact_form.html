@@ -4,83 +4,71 @@
 
 {% block body %}
 
-<!--Section: Contact v.2-->
-<section class="mb-3" class="text-center">
+<section class="h-100">
+		<div class="container h-100">
+			<div class="row justify-content-sm-center h-100">
+				<div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
+					<div class="text-center my-5">
+<!--						<img src="https://getbootstrap.com/docs/5.0/assets/brand/bootstrap-logo.svg" alt="logo" width="100">-->
+					</div>
+					<div class="card shadow-lg">
+						<div class="card-body p-5">
+							<h1 class="fs-4 card-title fw-bold mb-4">Skontaktuj się z nami</h1>
+							<form method="POST" class="needs-validation" novalidate="" autocomplete="off">
+                                {{ form.csrf_token }}
+								<div class="mb-3">
+									<label class="mb-2 text-muted" for="first_name">{{ form.first_name.label }}</label>
+                                    {{ form.first_name(class="form-control") }}
+<!--									<input id="name" type="text" class="form-control" name="name" value="{{ form.first_name.data }}" required autofocus>-->
+									<div class="invalid-feedback">
+										Imię jest wymagane
+									</div>
+								</div>
 
-    <!--Section heading-->
-    <h2 class="h1-responsive font-weight-bold text-center my-5">Problem?</h2>
-    <!--Section description-->
-    <p class="text-center w-responsive mx-auto mb-5">Masz problem z działaniem programu, coś nie działa, albo chcesz się pożalić napisz do twórcy</p>
+								<div class="mb-3">
+									<label class="mb-2 text-muted" for="email">{{ form.email.label }}</label>
+<!--									<input id="email" type="email" class="form-control" name="email" value="{{ form.email.data }}" required>-->
+                                    {{ form.email(class="form-control") }}
+									<div class="invalid-feedback">
+										Niepoprawny email
+									</div>
+								</div>
 
-    <div class="row">
+                                <div class="mb-3">
+                                    <label class="mb-2 text-muted" for="subject">{{ form.subject.label }}</label>
+                                    {{ form.email(class="form-control") }}
 
-        <!--Grid column-->
-        <div class="col-md-9 mb-md-0 mb-5 text-center card-body p-5 container">
-            <form id="contact-form" name="contact-form" method="POST"> <! --- TU jest metoda wysylania maili action="mail.php"--->
-
-                <!--Grid row-->
-                <div class="row">
-
-                    <!--Grid column-->
-                    <div class="col-md-6">
-                        <div class="md-form mb-0">
-                            <input type="text" id="name" name="name" class="form-control" placeholder="Jesteś pewien/na że chcesz podać tę informację?">
-                            <label for="name" class="" style="font-size: 10px">Nazwa użytkownika</label>
+                                </div>
                         </div>
                     </div>
-                    <!--Grid column-->
-
-                    <!--Grid column-->
-                    <div class="col-md-6">
-                        <div class="md-form mb-0">
-                            <input type="text" id="email" name="email" class="form-control" placeholder="Uuuuu... Odważnie!">
-                            <label for="email" class="" style="font-size: 10px">Firmowy adres email</label>
-                        </div>
-                    </div>
-                    <!--Grid column-->
-
-                </div>
-                <!--Grid row-->
-
-                <!--Grid row-->
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="md-form mb-0">
-                            <input type="text" id="subject" name="subject" class="form-control" placeholder="Z czym przybywasz wędrowcze?">
-                            <label for="subject" class="" style="font-size: 10px">Temat Twojej wiadomości</label>
-                        </div>
-                    </div>
-                </div>
-                <!--Grid row-->
-
-                <!--Grid row-->
-                <div class="row">
-
-                    <!--Grid column-->
-                    <div class="col-md-12">
-
-                        <div class="md-form">
-                            <textarea type="text" id="message" name="message" rows="2" class="form-control md-textarea" placeholder="Tu możesz wylać swoje żale"></textarea>
-                            <label for="message" style="font-size: 10px">Wpisz swoją wiadomość</label>
-                        </div>
-
-                    </div>
-                </div>
-                <!--Grid row-->
-
-            </form>
-
-            <div class="text-center text-md-left">
-                <a class="btn btn-primary" onclick="document.getElementById('contact-form').submit();">Wyślij</a>
-            </div>
-            <div class="status"></div>
-        </div>
-        <!--Grid column-->
 
 
+								<div class="mb-3">
+                                <textarea class="form-control mb-3 textarea" type="text" id="message" name="message" rows="5"  placeholder="Wpisz swoją wiadomość"></textarea>
+                                </div>
 
-    </div>
+								<div class="align-items-center d-flex">
+									<button type="submit" class="btn btn-primary ms-auto">
+										Wyślij wiadomość
+									</button>
+								</div>
+							</form>
+						</div>
+						<div class="card-footer py-3 border-0">
+							<div class="text-center">
+								Masz już konto? <a href="login" class="text-dark">Zaloguj się</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 
-</section>
-<!--  <button type="reset" class="btn btn-info">Wyczyść</button>-->
+	<script src="js/login.js"></script>
+
+
 {% endblock %}
+
+
+
