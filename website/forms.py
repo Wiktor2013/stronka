@@ -36,26 +36,26 @@ class RegisterForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    email = TextField("Adres email", [Email(check_deliverability=True), DataRequired()])
+    email = StringField("Adres email", [Email(check_deliverability=True), DataRequired()])
     password = PasswordField("Hasło", [DataRequired()])
     submit = SubmitField("Zaloguj")
 
 
 class ContactForm(FlaskForm):
-    first_name = TextField("Imię", [validators.DataRequired(), validators.Length(min=3, max=50)])
-    email = TextField("Adres email", [Email(check_deliverability=True), DataRequired(), LocalEmail()])
-    subject = TextField("Temat wiadomości", [validators.Length(min=3, max=50)])
+    first_name = StringField("Imię", [validators.DataRequired(), validators.Length(min=3, max=50)])
+    email = StringField("Adres email", [Email(check_deliverability=True), DataRequired(), LocalEmail()])
+    subject = StringField("Temat wiadomości", [validators.Length(min=3, max=50)])
     message = TextAreaField("Wiadomość", [validators.Length(min=3, max=250)])
     submit = SubmitField("Wyślij")
 
 
 class ComplainForm(FlaskForm):
-    email = TextField("Adres email", [Email(check_deliverability=True), DataRequired(), LocalEmail()])
+    email = StringField("Adres email", [Email(check_deliverability=True), DataRequired(), LocalEmail()])
     complain = TextAreaField("Skarga", [Length(min=10), DataRequired(), LettersRequired()])
 
 
 class ForgotForm(FlaskForm):
-    email = TextField("Adres email", [Email(check_deliverability=True), DataRequired()])
+    email = StringField("Adres email", [Email(check_deliverability=True), DataRequired()])
     submit = SubmitField("Wyślij link")
 
 
@@ -64,9 +64,3 @@ class ResetForm(FlaskForm):
                                         validators.EqualTo('password_new_conf', message='Hasła muszą być takie same')])
     password_new_conf = PasswordField('Potwierdź hasło', [validators.DataRequired(), validators.Length(min=7, max=50)])
     submit = SubmitField("Zresetuj hasło")
-
-
-
-
-
-

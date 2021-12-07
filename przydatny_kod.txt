@@ -165,3 +165,13 @@
 </section>
 <!--  <button type="reset" class="btn btn-info">Wyczyść</button>-->
 {% endblock %}
+
+        if request.method == "POST":
+        name = request.form["name"]
+        email = request.form["email"]
+        subject = request.form["subject"]
+        message = request.form["message"]
+        wiadomosci = pd.DataFrame({'name': name, 'email':email, 'subject': subject, 'message': message}, index = [0])
+        wiadomosci.to_csv('/home/sanczo/PycharmProjects/stronka/contactusMessage.csv')
+        # with open("wiadomosci.txt", "a") as f:
+            # f.write(wiadomosci["name"] + " ; " + wiadomosci["email"] + " ; " + str(dzisiaj) + " ; " + current_time + "\n")

@@ -38,24 +38,43 @@ class User(db.Model, UserMixin): #L2. UserMixin - dodajac go do tabeli mowimy ze
     user_second_name = db.Column(db.String(35))
     user_company_initials = db.Column(db.String(4))
     user_password = db.Column(db.String(25))
-    user_email = db.Column(db.String(25), unique=True)
+    user_email = db.Column(db.String(35), unique=True, nullable=False)
     user_project = db.Column(db.String(50))
     user_login_log = db.Column(db.String(50))
-    user_complain = db.Column(db.String(250))
-    user_message = db.column(db.String(250))
+    user_complain = db.Column(db.Text)
+    user_message = db.column(db.Text)
     is_confirmed = db.Column(db.Boolean, default=False)
     confirmation_code = db.Column(db.String(65))
 
-class Complains(db.Model):
+
+class Messages(db.Model):
+    message_id = db.Column(db.Integer, primary_key=True)
+    message_author = db.Column(db.String(35), db.ForeignKey('user.user_email'), nullable=False)
+    me_author = db.relationship('User', backref=db.backref('messages', lazy=True))
+    message_subject = db.Column(db.String(50))
+    message_body = db.Column(db.Text, nullable=False)
+
+
+class Complaints(db.Model):
     complain_id = db.Column(db.Integer, primary_key=True)
-    complain_author = db.Column(db.Integer)
+    complain_author = db.Column(db.String(35), db.ForeignKey('user.user_email'),nullable=False)
     complain_subject = db.Column(db.String(50))
-    complain_body = db.Column(db.String(255))
+    complain_body = db.Column(db.Text, nullable=False)
+    author = db.relationship('User', backref=db.backref('complaints', lazy=True))
+
+
+class Login_log(db.Model):
+    login_log_id = db.Column(db.Integer, primary_key=True)
+    login_user_id = db.Column(db.String(35), db.ForeignKey("user.user_email"), nullable=False)
+    lo_user = db.relationship('User', backref=db.backref('logins', lazy=True))
+    login_date = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow())
+
 
 class Projects(db.Model):
     project_id = db.Column(db.Integer, primary_key=True)
     project_name = db.Column(db.String(25), unique=True)
-    project_members = db.Column(db.Integer)
+    project_members = db.Column(db.String(35), db.ForeignKey("user.user_email"), nullable=False)
+    pr_members = db.relationship('User', backref=db.backref('projects', lazy=True))
     project_description = db.Column(db.String(255))
 
 
@@ -64,32 +83,18 @@ class Storage(db.Model):
     article_code = db.Column(db.String(20), unique=True)
     article_name = db.Column(db.String(50))
     article_lot_number = db.Column(db.String(20), unique=True)
-    article_purchase_date = db.Column(db.Integer)
-    article_purchase_user = db.Column(db.Integer)
-    article_delivery_date = db.Column(db.Integer)
+    article_purchase_date = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
+    article_purchase_user = db.Column(db.String(35), db.ForeignKey("user.user_email"), nullable=False)
+    article_delivery_date = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
     article_delivery_quantity = db.Column(db.Integer)
     article_units = db.Column(db.String(10))
     article_initial_quantity = db.Column(db.Integer)
     article_used = db.Column(db.Integer)
-    article_user = db.Column(db.Integer)
+    # article_user = db.Column(db.String(35), db.ForeignKey("user.user_email"), nullable=False)
     article_remaining_quantity = db.Column(db.Integer)
-    article_project = db.Column(db.Integer)
-
-
-class Messages(db.Model):
-    message_id = db.Column(db.Integer, primary_key=True)
-    message_author = db.Column(db.String(35))
-    message_subject = db.Column(db.String(50))
-    message_body = db.Column(db.String(255))
-
-
-class Login_log(db.Model):
-    login_log_id = db.Column(db.Integer, primary_key=True)
-    login_user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    login_date = db.Column(db.DateTime(timezone=True))
-
-
-
+    article_project = db.Column(db.String(35), db.ForeignKey("projects.project_id"), nullable=False)
+    # user = db.relationship('User', backref=db.backref('articles', lazy=True))
+    # project = db.relationship('Projects', backref=db.backref('arts', lazy=True))
 
 #4. stworzenie obiektu migracji
 migrate = Migrate(app=app, db=db)
@@ -129,7 +134,7 @@ def register():
                     confirmation_code=create_code(64))
         db.session.add(user)
         db.session.commit()
-        msg = Message("Potwierdzenie stworzenia konta", sender="Sanczo panczo", recipients=["rork3@wp.pl", user.user_email])
+        msg = Message("Potwierdzenie stworzenia konta", sender="Sanczo Panczo", recipients=["rork3@wp.pl", user.user_email])
         msg.html = f"<h1>Witaj</h1> Twój link aktywacyjny: <a href='http://127.0.0.1:5000/confirm/{user.confirmation_code}'>CLICK</a>"
         mail.send(msg)
         flash("Zarejestrowano nowego użytkownika!", category="success")
@@ -154,7 +159,6 @@ def confirm(code):
 @app.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
-
     if form.validate_on_submit():
         email = form.email.data
         password = form.password.data
@@ -182,16 +186,12 @@ def login():
 @app.route('/contactus', methods=["GET", "POST"])
 def contact():
     form = ContactForm()
-    if request.method == "POST":
-        name = request.form["name"]
-        email = request.form["email"]
-        subject = request.form["subject"]
-        message = request.form["message"]
-        wiadomosci = pd.DataFrame({'name': name, 'email':email, 'subject': subject, 'message': message}, index = [0])
-        wiadomosci.to_csv('/home/sanczo/PycharmProjects/stronka/contactusMessage.csv')
-        # with open("wiadomosci.txt", "a") as f:
-            # f.write(wiadomosci["name"] + " ; " + wiadomosci["email"] + " ; " + str(dzisiaj) + " ; " + current_time + "\n")
-        kontakt = Messages(message_author=email, message_subject=subject, message_body=message)
+    if form.validate_on_submit():
+        # first_name = form.first_name.data
+        # email = form.email.data
+        # subject = form.subject.data
+        # message = form.message.data
+        kontakt = Messages(user_first_name=first_name, message_author=email, message_subject=subject, message_body=message)
         db.session.add(kontakt)
         db.session.commit()
         flash("Wiadomość została wysłana", category="success")
