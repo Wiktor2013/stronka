@@ -30,7 +30,8 @@ class RegisterForm(FlaskForm):
     first_name = StringField('Imię', [validators.DataRequired(), validators.Length(min=3, max=50)])
     second_name = StringField('Nazwisko', [validators.DataRequired(), validators.Length(min=3, max=50)])
     email = StringField("Email", [Email(check_deliverability=True), DataRequired()])
-    password1 = PasswordField('Hasło', [validators.DataRequired(), validators.Length(min=7, max=50), validators.EqualTo('password2',message='Hasła muszą być takie same')])
+    password1 = PasswordField('Hasło', [validators.DataRequired(), validators.Length(min=7, max=50),
+                                        validators.EqualTo('password2', message='Hasła muszą być takie same')])
     password2 = PasswordField('Potwierdź hasło', [validators.DataRequired(), validators.Length(min=7, max=50)])
     submit = SubmitField("Zarejestruj")
 
@@ -51,7 +52,7 @@ class ContactForm(FlaskForm):
 
 class ComplainForm(FlaskForm):
     email = StringField("Adres email", [Email(check_deliverability=True), DataRequired(), LocalEmail()])
-    complain = TextAreaField("Skarga", [Length(min=10), DataRequired(), LettersRequired()])
+    complaint = TextAreaField("Skarga", [Length(min=10), DataRequired(), LettersRequired()])
 
 
 class ForgotForm(FlaskForm):
@@ -61,6 +62,6 @@ class ForgotForm(FlaskForm):
 
 class ResetForm(FlaskForm):
     password_new = PasswordField('Hasło', [validators.DataRequired(), validators.Length(min=7, max=50),
-                                        validators.EqualTo('password_new_conf', message='Hasła muszą być takie same')])
+                                           validators.EqualTo('password_new_conf', message='Hasła muszą być takie same')])
     password_new_conf = PasswordField('Potwierdź hasło', [validators.DataRequired(), validators.Length(min=7, max=50)])
     submit = SubmitField("Zresetuj hasło")

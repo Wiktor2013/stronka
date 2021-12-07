@@ -4,3 +4,5 @@ flask-SQLAlchemy
 flask-Migrate
 email_validator
 flask-mail
+wtforms
+werkzeug
