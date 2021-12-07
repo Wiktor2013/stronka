@@ -1,12 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, redirect, url_for, flash
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy #0. Instalacja i import SQLAlchemy (requirements.txt)
-import pandas as pd
 from flask_migrate import Migrate
-from sqlalchemy import ForeignKey
 from .forms import ComplainForm, ContactForm, RegisterForm, LoginForm, ForgotForm, ResetForm
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin, LoginManager, login_user, logout_user, current_user, login_required #L1. importy
+from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required #L1. importy
 from flask_mail import Message, Mail
 from random import choice
 from string import ascii_letters
@@ -187,11 +185,7 @@ def login():
 def contact():
     form = ContactForm()
     if form.validate_on_submit():
-        # first_name = form.first_name.data
-        # email = form.email.data
-        # subject = form.subject.data
-        # message = form.message.data
-        kontakt = Messages(user_first_name=first_name, message_author=email, message_subject=subject, message_body=message)
+        kontakt = Messages(message_author=form.email.data, message_subject=form.subject.data, message_body=form.message.data)
         db.session.add(kontakt)
         db.session.commit()
         flash("Wiadomość została wysłana", category="success")
@@ -204,7 +198,7 @@ def complain():
     form = ComplainForm()
 
     if form.validate_on_submit():
-        skarga = Complains(complain_author=form.email.data, complain_body=form.complain.data)
+        skarga = Complaints(complain_author=form.email.data, complain_body=form.complain.data)
         db.session.add(skarga)
         db.session.commit()
         flash("Dodano Twoją skargę", category="success")
