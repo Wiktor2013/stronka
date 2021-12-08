@@ -15,20 +15,16 @@
 						<div class="card-body p-5">
 							<h1 class="fs-4 card-title fw-bold mb-4">Resetuj Hasło</h1>
 							<form method="POST" class="needs-validation" novalidate="" autocomplete="off">
-<!--                                {{ form.csrf_token }}-->
 								<div class="mb-3">
 									<label class="mb-2 text-muted" for="password">Nowe Hasło</label>
-<!--									<input id="password" type="password" class="form-control" name="password" value="" required autofocus>-->
-                                    {{ form.password_new(class="form-control") }}
+									<input id="password_new" type="password_new" class="form-control" name="password_new" value="" required autofocus>
 									<div class="invalid-feedback">
 										Hasło jest wymagane
 									</div>
 								</div>
-
 								<div class="mb-3">
-									<label class="mb-2 text-muted" for="password-confirm">Potwierdź hasło</label>
-<!--									<input id="password-confirm" type="password" class="form-control" name="password_confirm" required>-->
-                                    {{ form.password_new_conf(class="form-control") }}
+									<label class="mb-2 text-muted" for="password_new_conf">Potwierdź hasło</label>
+									<input id="password_new_conf" type="password_new_conf" class="form-control" name="password_new_conf" required>
 								    <div class="invalid-feedback">
 										Potwierdź swoje nowe hasło
 							    	</div>

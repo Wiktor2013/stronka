@@ -2,7 +2,7 @@ from flask import Flask, render_template, redirect, url_for, flash
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy  # 0. Instalacja i import SQLAlchemy (requirements.txt)
 from flask_migrate import Migrate
-from .forms import ComplainForm, ContactForm, RegisterForm, LoginForm, ForgotForm, ResetForm
+from .forms import ComplaintForm, ContactForm, RegisterForm, LoginForm, ForgotForm, ResetForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required  # L1. importy
 from flask_mail import Message, Mail
@@ -209,8 +209,8 @@ def contact():
 
 @app.route("/complain", methods=["GET", "POST"])
 @login_required  # dodaj to do kazdej strony ktora ma byc dostepna tylko po zalogowaniu
-def complain():
-    form = ComplainForm()
+def complaint():
+    form = ComplaintForm()
     if form.validate_on_submit():
         skarga = Complaints(complain_author=form.email.data, complain_body=form.complain.data)
         db.session.add(skarga)
@@ -220,7 +220,7 @@ def complain():
         for error in list(form.email.errors) + list(form.complain.errors):
             flash(error, category="danger")
 
-    return render_template("complain.html", form=form)
+    return render_template("complaint.html", form=form)
 
 
 @app.route("/logout")
@@ -239,10 +239,14 @@ def forgot():
 @app.route('/reset', methods=["GET", "POST"])
 def reset():
     form = ResetForm()
-    # if form.validate_on_submit():
-    #     if form.validate_on_submit():
-    #         email = form.email.data
-    #         password = form.password.data
-    #     db.session.add(skarga)
-    #     db.session.commit()
+    if form.validate_on_submit():
+        if check_password_hash(user.user_password, password):
+            if user.is_confirmed:
+                nowe_haslo = User(user_password=generate_password_hash(form.password_new.data, method="sha256"))
+                db.session.add(nowe_haslo)
+                db.session.commit()
+                login_user(user)  # dodaj to zeby sie user zalogowal
+                flash("Zalogowano!", category="success")
+                return redirect(url_for("home"))
+
     return render_template('reset.html')

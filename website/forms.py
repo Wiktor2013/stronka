@@ -50,7 +50,7 @@ class ContactForm(FlaskForm):
     submit = SubmitField("Wyślij")
 
 
-class ComplainForm(FlaskForm):
+class ComplaintForm(FlaskForm):
     email = StringField("Adres email", [Email(check_deliverability=True), DataRequired(), LocalEmail()])
     complaint = TextAreaField("Skarga", [Length(min=10), DataRequired(), LettersRequired()])
 
