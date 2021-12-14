@@ -44,7 +44,7 @@ class LoginForm(FlaskForm):
 
 class ContactForm(FlaskForm):
     first_name = StringField("Imię", [validators.DataRequired(), validators.Length(min=3, max=50)])
-    email = StringField("Adres email", [Email(check_deliverability=True), DataRequired(), LocalEmail()])
+    email = StringField("Adres email", [Email(check_deliverability=True), DataRequired()])
     subject = StringField("Temat wiadomości", [validators.Length(min=3, max=50)])
     message = TextAreaField("Wiadomość", [validators.Length(min=3, max=250)])
     submit = SubmitField("Wyślij")

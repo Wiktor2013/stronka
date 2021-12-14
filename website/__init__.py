@@ -42,10 +42,10 @@ class User(db.Model, UserMixin):  # L2. UserMixin - dodajac go do tabeli mowimy 
     user_company_initials = db.Column(db.String(4))
     user_password = db.Column(db.String(25))
     user_email = db.Column(db.String(35), unique=True, nullable=False)
-    user_project = db.Column(db.String(50))
-    user_login_log = db.Column(db.String(50))
+    user_project = db.Column(db.String(50), db.ForeignKey('projects.project_id'))
+    user_login_log = db.Column(db.String(50), db.ForeignKey('login.login_log_id'))
     user_complain = db.Column(db.Text)
-    user_message = db.column(db.Text)
+    user_message = db.column(db.Text, db.ForeignKey('messages.message_id'))
     is_confirmed = db.Column(db.Boolean, default=False)
     confirmation_code = db.Column(db.String(65))
 
@@ -60,13 +60,13 @@ class Messages(db.Model):
 
 class Complaints(db.Model):
     complain_id = db.Column(db.Integer, primary_key=True)
-    complain_author = db.Column(db.String(35), db.ForeignKey('user.id'), nullable=False)
+    complain_author = db.Column(db.String(35), db.ForeignKey('user.user_email'), nullable=False)
     complain_subject = db.Column(db.String(50))
     complain_body = db.Column(db.Text, nullable=False)
     #author = db.relationship('User', backref=db.backref('complaints', lazy=True))
 
 
-class LoginLog(db.Model):
+class Login(db.Model):
     login_log_id = db.Column(db.Integer, primary_key=True)
     login_user_id = db.Column(db.String(35), db.ForeignKey("user.id"), nullable=False)
     # lo_user = db.relationship('User', backref=db.backref('logins', lazy=True))
@@ -93,7 +93,7 @@ class Storage(db.Model):
     article_units = db.Column(db.String(10))
     article_initial_quantity = db.Column(db.Integer)
     article_used = db.Column(db.Integer)
-    # article_user = db.Column(db.String(35), db.ForeignKey("user.user_email"), nullable=False)
+    article_user = db.Column(db.String(35), db.ForeignKey("user.user_email"), nullable=False)
     article_remaining_quantity = db.Column(db.Integer)
     article_project = db.Column(db.String(35), db.ForeignKey("projects.project_id"), nullable=False)
     # user = db.relationship('User', backref=db.backref('articles', lazy=True))
@@ -182,7 +182,7 @@ def login():
         if user:
             if check_password_hash(user.user_password, password):
                 if user.is_confirmed:
-                    login_log = LoginLog(login_user_id=user.id, login_date=datetime.now())
+                    login_log = Login(login_user_id=user.id, login_date=datetime.now())
                     db.session.add(login_log)
                     db.session.commit()
                     login_user(user)  # dodaj to zeby sie user zalogowal
@@ -218,7 +218,7 @@ def contact():
 def complaint():
     form = ComplaintForm()
     if form.validate_on_submit():
-        skarga = Complaints(complain_author=form.email.data, complain_body=form.complain.data)
+        skarga = Complaints(complain_author=form.email.data, complain_body=form.complaint.data)
         db.session.add(skarga)
         db.session.commit()
         flash("Dodano Twoją skargę", category="success")
