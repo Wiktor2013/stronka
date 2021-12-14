@@ -6,3 +6,4 @@ email_validator
 flask-mail
 wtforms
 werkzeug
+requests

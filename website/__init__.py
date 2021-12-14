@@ -8,6 +8,7 @@ from flask_login import UserMixin, LoginManager, login_user, logout_user, login_
 from flask_mail import Message, Mail
 from random import choice
 from string import ascii_letters
+import requests
 
 now = datetime.now()
 current_time = now.strftime("%H:%M:%S")
@@ -51,32 +52,32 @@ class User(db.Model, UserMixin):  # L2. UserMixin - dodajac go do tabeli mowimy 
 
 class Messages(db.Model):
     message_id = db.Column(db.Integer, primary_key=True)
-    message_author = db.Column(db.String(35), db.ForeignKey('user.user_email'), nullable=False)
-    me_author = db.relationship('User', backref=db.backref('messages', lazy=True))
+    message_author = db.Column(db.String(35), db.ForeignKey('user.id'), nullable=False)
+    #me_author = db.relationship('User', backref=db.backref('messages', lazy=True))
     message_subject = db.Column(db.String(50))
     message_body = db.Column(db.Text, nullable=False)
 
 
 class Complaints(db.Model):
     complain_id = db.Column(db.Integer, primary_key=True)
-    complain_author = db.Column(db.String(35), db.ForeignKey('user.user_email'), nullable=False)
+    complain_author = db.Column(db.String(35), db.ForeignKey('user.id'), nullable=False)
     complain_subject = db.Column(db.String(50))
     complain_body = db.Column(db.Text, nullable=False)
-    author = db.relationship('User', backref=db.backref('complaints', lazy=True))
+    #author = db.relationship('User', backref=db.backref('complaints', lazy=True))
 
 
 class LoginLog(db.Model):
     login_log_id = db.Column(db.Integer, primary_key=True)
-    login_user_id = db.Column(db.String(35), db.ForeignKey("user.user_email"), nullable=False)
-    lo_user = db.relationship('User', backref=db.backref('logins', lazy=True))
+    login_user_id = db.Column(db.String(35), db.ForeignKey("user.id"), nullable=False)
+    # lo_user = db.relationship('User', backref=db.backref('logins', lazy=True))
     login_date = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow())
 
 
 class Projects(db.Model):
     project_id = db.Column(db.Integer, primary_key=True)
     project_name = db.Column(db.String(25), unique=True)
-    project_members = db.Column(db.String(35), db.ForeignKey("user.user_email"), nullable=False)
-    pr_members = db.relationship('User', backref=db.backref('projects', lazy=True))
+    project_members = db.Column(db.String(35), db.ForeignKey("user.id"), nullable=False)
+    # pr_members = db.relationship('User', backref=db.backref('projects', lazy=True))
     project_description = db.Column(db.String(255))
 
 
@@ -86,7 +87,7 @@ class Storage(db.Model):
     article_name = db.Column(db.String(50))
     article_lot_number = db.Column(db.String(20), unique=True)
     article_purchase_date = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
-    article_purchase_user = db.Column(db.String(35), db.ForeignKey("user.user_email"), nullable=False)
+    article_purchase_user = db.Column(db.String(35), db.ForeignKey("user.id"), nullable=False)
     article_delivery_date = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
     article_delivery_quantity = db.Column(db.Integer)
     article_units = db.Column(db.String(10))
@@ -129,7 +130,8 @@ def home():
     # msg = Message("Testowy temat", sender="Sanczo panczo", recipients=["weresa@gmail.com", "rork3@wp.pl"])
     # msg.html = "<h1>Witaj</h1>"
     # mail.send(msg)
-    return render_template('home.html')
+    users = User.query.all()
+    return render_template('home.html', users=users)
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -150,6 +152,7 @@ def register():
                    f"<a href='http://127.0.0.1:5000/confirm/{user.confirmation_code}'>CLICK</a>"
         mail.send(msg)
         flash("Zarejestrowano nowego użytkownika!", category="success")
+        print(msg.html)
         return redirect(url_for("login"))
     else:
         for error in list(form.email.errors) + list(form.password1.errors):
@@ -204,6 +207,9 @@ def contact():
         db.session.add(kontakt)
         db.session.commit()
         flash("Wiadomość została wysłana", category="success")
+    # else:
+    #     for err in form.email.errors:
+    #         flash(err, category="danger")
     return render_template('contact_form.html', form=form)
 
 
@@ -233,7 +239,18 @@ def logout():
 @app.route('/forgot', methods=["GET", "POST"])
 def forgot():
     form = ForgotForm()
-    return render_template('forgot.html')
+    if form.validate_on_submit():
+        user = User.query.filter_by(user_email=form.email.data).first()
+        if user:
+            msg = Message("Potwierdzenie stworzenia konta", sender="Sanczo Panczo",
+                          recipients=["rork3@wp.pl", user.user_email])
+            msg.html = f"<h1>Witaj</h1> Twój link do resetu hasla: " \
+                       f"<a href='http://127.0.0.1:5000/confirm/{user.confirmation_code}'>CLICK</a>"
+            mail.send(msg)
+            flash("Wiadomosc wyslana!", category="success")
+        else:
+            flash("Nie ma uzytkownika o takim adresie email", category="danger")
+    return render_template('forgot.html', form=form)
 
 
 @app.route('/reset', methods=["GET", "POST"])
@@ -249,4 +266,10 @@ def reset():
                 flash("Zalogowano!", category="success")
                 return redirect(url_for("home"))
 
-    return render_template('reset.html')
+    return render_template('reset.html', form=form)
+
+
+@app.route("/games")
+def games():
+    data = requests.get("https://www.cheapshark.com/api/1.0/deals?storeID=1&upperPrice=1000").json()
+    return render_template("games.html", data=data)

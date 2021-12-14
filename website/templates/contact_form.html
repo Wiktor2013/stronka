@@ -18,28 +18,34 @@
 								<div class="mb-3">
 									<label class="mb-2 text-muted" for="first_name">{{ form.first_name.label }}</label>
                                     {{ form.first_name(class="form-control") }}
+									{% for err in form.first_name.errors %}
+									<div style="color: red;">{{err}}</div>
+									{% endfor %}
 <!--									<input id="name" type="text" class="form-control" name="name" value="{{ form.first_name.data }}" required autofocus>-->
-									<div class="invalid-feedback">
-										Imię jest wymagane
-									</div>
 								</div>
 
 								<div class="mb-3">
 									<label class="mb-2 text-muted" for="email">{{ form.email.label }}</label>
 <!--									<input id="email" type="email" class="form-control" name="email" value="{{ form.email.data }}" required>-->
                                     {{ form.email(class="form-control") }}
-									<div class="invalid-feedback">
-										Niepoprawny email
-									</div>
+									{% for err in form.email.errors %}
+									<div style="color: red;">{{err}}</div>
+									{% endfor %}
 								</div>
 
                                 <div class="mb-3">
                                     <label class="mb-2 text-muted" for="subject">{{ form.subject.label }}</label>
                                     {{ form.subject(class="form-control") }}
+									{% for err in form.subject.errors %}
+									<div style="color: red;">{{err}}</div>
+									{% endfor %}
                                 </div>
                                 <div class="mb-3">
                                     <label class="mb-2 text-muted" for="message">{{ form.message.label }}</label>
-                                    <textarea class="form-control"  id="message" name="message" rows="5">{{ form.message(class="form-control") }}</textarea>
+                                   {{ form.message(class="form-control") }}
+									{% for err in form.message.errors %}
+									<div style="color: red;">{{err}}</div>
+									{% endfor %}
                                 </div>
                                 <div class="align-items-center d-flex">
                                     <button type="submit" class="btn btn-primary ms-auto">

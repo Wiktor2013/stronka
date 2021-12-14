@@ -36,4 +36,19 @@
 </center>
 </div>
 
+<table class="table">
+    <tr>
+        <th>Email</th>
+        <th>Imie</th>
+        <th>Data ostatniego logowania</th>
+    </tr>
+
+{% for user in users %}
+<tr>
+    <td>{{user.user_email}}</td>
+    <td>{{user.user_first_name}}</td>
+    <td>{{user.user_login_log}}</td>
+</tr>
+{% endfor %}
+</table>
 {% endblock %}

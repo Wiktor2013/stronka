@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+
+{% block title %} Games {% endblock %}
+
+{% block body %}
+
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Sale Price</th>
+        <th>Normal Price</th>
+        <th>Image</th>
+    </tr>
+    {% for game in data %}
+    <tr>
+        <td>{{game.title}}</td>
+        <td>{{game.salePrice}}</td>
+        <td>{{game.normalPrice}}</td>
+        <td><img src="{{game.thumb}}"/></td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}
