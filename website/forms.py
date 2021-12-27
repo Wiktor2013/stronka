@@ -51,7 +51,7 @@ class ContactForm(FlaskForm):
 
 
 class ComplaintForm(FlaskForm):
-    email = StringField("Adres email", [Email(check_deliverability=True), DataRequired(), LocalEmail()])
+    email = StringField("Adres email", [Email(check_deliverability=True), DataRequired()])
     complaint = TextAreaField("Skarga", [Length(min=10), DataRequired(), LettersRequired()])
 
 

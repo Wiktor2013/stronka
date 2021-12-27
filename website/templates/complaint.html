@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 
-
 {% block title %} Skargi {% endblock %}
 
 {% block body %}
@@ -10,64 +9,32 @@
 			<div class="row justify-content-sm-center h-100">
 				<div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
 					<div class="text-center my-5">
-<!--						<img src="https://getbootstrap.com/docs/5.0/assets/brand/bootstrap-logo.svg" alt="logo" width="100">-->
 					</div>
 					<div class="card shadow-lg">
 						<div class="card-body p-5">
-							<h1 class="fs-4 card-title fw-bold mb-4">Zarejestruj się</h1>
+							<h1 class="fs-4 card-title fw-bold mb-4">Poskarż się na działanie strony</h1>
 							<form method="POST" class="needs-validation" novalidate="" autocomplete="off">
                                 {{ form.csrf_token }}
 								<div class="mb-3">
-									<label class="mb-2 text-muted" for="first_name">{{ form.first_name.label }}</label>
-                                    {{ form.first_name(class="form-control") }}
-<!--									<input id="name" type="text" class="form-control" name="name" value="{{ form.first_name.data }}" required autofocus>-->
-									<div class="invalid-feedback">
-										Imię jest wymagane
-									</div>
-								</div>
-
-                                <div class="mb-3">
-									<label class="mb-2 text-muted" for="second_name">{{ form.second_name.label }}</label>
-                                    {{ form.second_name(class="form-control") }}
-<!--									<input id="name" type="text" class="form-control" name="name" value="{{ form.second_name.data }}" required autofocus>-->
-									<div class="invalid-feedback">
-										Nazwisko jest wymagane
-									</div>
-								</div>
-
-								<div class="mb-3">
 									<label class="mb-2 text-muted" for="email">{{ form.email.label }}</label>
-<!--									<input id="email" type="email" class="form-control" name="email" value="{{ form.email.data }}" required>-->
                                     {{ form.email(class="form-control") }}
-									<div class="invalid-feedback">
-										Niepoprawny email
-									</div>
+									{% for err in form.email.errors %}
+									<div style="color: red;">{{err}}</div>
+									{% endfor %}
 								</div>
-
-								<div class="mb-3">
-									<label class="mb-2 text-muted" for="password">{{ form.password1.label }}</label>
-<!--									<input id="password" type="password" class="form-control" name="password1" required>-->
-                                    {{ form.password1(class="form-control") }}
-								    <div class="invalid-feedback">
-								    	Hasło jest wymagane
-							    	</div>
-								</div>
-
                                 <div class="mb-3">
-									<label class="mb-2 text-muted" for="password">{{ form.password2.label }}</label>
-<!--									<input id="password" type="password" class="form-control" name="password2" required>-->
-                                    {{ form.password2(class="form-control") }}
-								    <div class="invalid-feedback">
-								    	Hasło jest wymagane
-							    	</div>
-								</div>
-
-								<div class="align-items-center d-flex">
-									<button type="submit" class="btn btn-primary ms-auto">
-										Zarejestruj
-									</button>
-								</div>
-							</form>
+                                    <label class="mb-2 text-muted" for="complaint">{{ form.complaint.label }}</label>
+                                   {{ form.complaint(class="form-control") }}
+									{% for err in form.complaint.errors %}
+									<div style="color: red;">{{err}}</div>
+									{% endfor %}
+                                </div>
+                                <div class="align-items-center d-flex">
+                                    <button type="submit" class="btn btn-primary ms-auto">
+                                        Wyślij wiadomość
+                                    </button>
+                                </div>
+                            </form>
 						</div>
 						<div class="card-footer py-3 border-0">
 							<div class="text-center">
@@ -78,29 +45,10 @@
 				</div>
 			</div>
 		</div>
-	</section>
+</section>
 
-	<script src="js/login.js"></script>
+<script src="js/login.js"></script>
+
+
 {% endblock %}
 
-
-<!--<center><h3>Complain</h3></center>-->
-
-
-<!--<form method="POST">-->
-<!--    {{ form.csrf_token }}-->
-
-<!--    <div class="form-outline mb-3 text-center card-body p-5 container">-->
-<!--        {{ form.email(class="form-control form-control-lg") }}-->
-<!--        <label for="email" class="form-label">{{ form.email.label }}</label>-->
-<!--    </div>-->
-
-<!--    <div class="form-outline mb-3 text-center card-body p-5 container">-->
-<!--        {{ form.complain(class="form-control form-control-lg") }}-->
-<!--        <label for="complain" class="form-label">{{ form.complain.label }}</label>-->
-<!--    </div>-->
-
-<!--    <button type="submit" class="btn btn-success center">Submit</button>-->
-<!--</form>-->
-
-<!--{% endblock %}-->

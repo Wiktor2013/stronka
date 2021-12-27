@@ -175,3 +175,25 @@
         wiadomosci.to_csv('/home/sanczo/PycharmProjects/stronka/contactusMessage.csv')
         # with open("wiadomosci.txt", "a") as f:
             # f.write(wiadomosci["name"] + " ; " + wiadomosci["email"] + " ; " + str(dzisiaj) + " ; " + current_time + "\n")
+
+
+<!--<center><h3>Complain</h3></center>-->
+
+
+<!--<form method="POST">-->
+<!--    {{ form.csrf_token }}-->
+
+<!--    <div class="form-outline mb-3 text-center card-body p-5 container">-->
+<!--        {{ form.email(class="form-control form-control-lg") }}-->
+<!--        <label for="email" class="form-label">{{ form.email.label }}</label>-->
+<!--    </div>-->
+
+<!--    <div class="form-outline mb-3 text-center card-body p-5 container">-->
+<!--        {{ form.complain(class="form-control form-control-lg") }}-->
+<!--        <label for="complain" class="form-label">{{ form.complain.label }}</label>-->
+<!--    </div>-->
+
+<!--    <button type="submit" class="btn btn-success center">Submit</button>-->
+<!--</form>-->
+
+<!--{% endblock %}-->

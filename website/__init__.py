@@ -2,6 +2,8 @@ from flask import Flask, render_template, redirect, url_for, flash
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy  # 0. Instalacja i import SQLAlchemy (requirements.txt)
 from flask_migrate import Migrate
+from sqlalchemy.sql.functions import user
+
 from .forms import ComplaintForm, ContactForm, RegisterForm, LoginForm, ForgotForm, ResetForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required  # L1. importy
@@ -44,7 +46,7 @@ class User(db.Model, UserMixin):  # L2. UserMixin - dodajac go do tabeli mowimy 
     user_email = db.Column(db.String(35), unique=True, nullable=False)
     user_project = db.Column(db.String(50), db.ForeignKey('projects.project_id'))
     user_login_log = db.Column(db.String(50), db.ForeignKey('login.login_log_id'))
-    user_complain = db.Column(db.Text)
+    user_complaint = db.Column(db.Text, db.ForeignKey('complaints.complaint_id'))
     user_message = db.column(db.Text, db.ForeignKey('messages.message_id'))
     is_confirmed = db.Column(db.Boolean, default=False)
     confirmation_code = db.Column(db.String(65))
@@ -53,17 +55,18 @@ class User(db.Model, UserMixin):  # L2. UserMixin - dodajac go do tabeli mowimy 
 class Messages(db.Model):
     message_id = db.Column(db.Integer, primary_key=True)
     message_author = db.Column(db.String(35), db.ForeignKey('user.id'), nullable=False)
-    #me_author = db.relationship('User', backref=db.backref('messages', lazy=True))
+    #  me_author = db.relationship('User', backref=db.backref('messages', lazy=True))
     message_subject = db.Column(db.String(50))
     message_body = db.Column(db.Text, nullable=False)
+    message_date = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow())
 
 
 class Complaints(db.Model):
-    complain_id = db.Column(db.Integer, primary_key=True)
-    complain_author = db.Column(db.String(35), db.ForeignKey('user.user_email'), nullable=False)
-    complain_subject = db.Column(db.String(50))
-    complain_body = db.Column(db.Text, nullable=False)
-    #author = db.relationship('User', backref=db.backref('complaints', lazy=True))
+    complaint_id = db.Column(db.Integer, primary_key=True)
+    complaint_author = db.Column(db.String(35), db.ForeignKey('user.user_email'), nullable=False)
+    complaint_subject = db.Column(db.String(50))
+    complaint_body = db.Column(db.Text, nullable=False)
+    #  author = db.relationship('User', backref=db.backref('complaints', lazy=True))
 
 
 class Login(db.Model):
@@ -218,12 +221,12 @@ def contact():
 def complaint():
     form = ComplaintForm()
     if form.validate_on_submit():
-        skarga = Complaints(complain_author=form.email.data, complain_body=form.complaint.data)
+        skarga = Complaints(complaint_author=form.email.data, complaint_body=form.complaint.data)
         db.session.add(skarga)
         db.session.commit()
         flash("Dodano Twoją skargę", category="success")
     else:
-        for error in list(form.email.errors) + list(form.complain.errors):
+        for error in list(form.email.errors) + list(form.complaint.errors):
             flash(error, category="danger")
 
     return render_template("complaint.html", form=form)
@@ -257,7 +260,7 @@ def forgot():
 def reset():
     form = ResetForm()
     if form.validate_on_submit():
-        if check_password_hash(user.user_password, password):
+        if check_password_hash(User.user_password, password):
             if user.is_confirmed:
                 nowe_haslo = User(user_password=generate_password_hash(form.password_new.data, method="sha256"))
                 db.session.add(nowe_haslo)
